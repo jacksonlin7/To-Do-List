@@ -185,6 +185,11 @@
 
             add_todo_btn.addEventListener("click", () => {
                 let todo_content = add_todo_input.value
+
+                if (!todo_content) {
+                    alert("The To-Do cannot be empty")
+                    return
+                }
                 
                 let todo = document.createElement("div")
                 todo.className = "todo"
