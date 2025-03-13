@@ -149,14 +149,6 @@
                 color: rgb(87, 87, 87);
                 text-decoration: line-through;
             }
-            
-            div#todo-list > div.todo:has(input:checked) {
-                background-color: rgb(200, 200, 200);
-            }
-            
-            div#todo-list > div.todo:has(input:checked) > button {
-                background-color: rgb(190, 190, 190);
-            }
 
             div#todo-list > div.todo:has(input:checked) {
                 background-color: rgb(200, 200, 200);
@@ -224,6 +216,7 @@
                     todo.classList.add("fadeout")
                     setTimeout(() => {
                         todo_list.removeChild(todo)
+                        save_todos()
                     }, 180)
                 })
 
