@@ -109,6 +109,7 @@
                 margin-left: auto;
                 border: none;
                 border-radius: 8px;
+                transition-duration: 200ms;
             }
 
             div#todo-list > div.todo > button:hover {
@@ -149,6 +150,18 @@
                 text-decoration: line-through;
             }
 
+            div#todo-list > div.todo:has(input:checked) {
+                background-color: rgb(200, 200, 200);
+            }
+
+            div#todo-list > div.todo:has(input:checked) > button {
+                background-color: rgb(190, 190, 190);
+            }
+
+            div#todo-list > div.todo:has(input:checked) > button:hover {
+                background-color: rgb(175, 175, 175);
+            }
+
             @keyframes fadeIn {
                 from {
                     opacity: 0;
@@ -183,22 +196,16 @@
             let add_todo_input = document.getElementById("add-todo-input")
             let add_todo_btn = document.getElementById("add-todo-btn")
 
-            add_todo_btn.addEventListener("click", () => {
-                let todo_content = add_todo_input.value
-
-                if (!todo_content) {
-                    alert("The To-Do content cannot be empty")
-                    return
-                }
-                
+            const add_todo = (content, is_finished) => {
                 let todo = document.createElement("div")
                 todo.className = "todo"
 
                 let input = document.createElement("input")
                 input.setAttribute("type", "checkbox")
+                input.checked = is_finished
 
                 let span = document.createElement("span")
-                span.innerHTML = todo_content
+                span.innerHTML = content
 
                 let del_btn = document.createElement("button")
                 let del_img = document.createElement("img")
@@ -212,6 +219,10 @@
                     }, 180)
                 })
 
+                input.addEventListener("change", () => {
+                    save_todos()
+                })
+
                 todo.appendChild(input)
                 todo.appendChild(span)
                 todo.appendChild(del_btn)
@@ -222,8 +233,64 @@
                     todo.classList.remove("fadein")
                 }, 180)
 
+                save_todos()
+            }
+
+            add_todo_btn.addEventListener("click", () => {
+                let todo_content = add_todo_input.value
+
+                if (!todo_content) {
+                    alert("The To-Do content cannot be empty")
+                    return
+                }
+
+                if (todo_content.length > 20) {
+                    alert("The To-Do content must less than 20 characters")
+                    return
+                }
+                
+                add_todo(todo_content, false)
+
                 add_todo_input.value = ""
             })
+
+            const todos_to_obj = () => {
+                let todos = []
+                for (const todo of todo_list.childNodes.values()) {
+                    let todo_finished = todo.childNodes[0].checked
+                    let todo_content = todo.childNodes[1].innerHTML
+                    
+                    todos.push(
+                        {
+                            "todo-content": todo_content,
+                            "todo-finished": todo_finished
+                        }
+                    )
+                }
+
+                return todos
+            }
+
+            const save_todos = () => {
+                const todos = todos_to_obj()
+
+                localStorage.setItem(
+                    "todo-list",
+                    JSON.stringify(todos)
+                )
+            }
+
+            const restore_todos = () => {
+                const todos = JSON.parse(
+                    localStorage.getItem("todo-list")
+                )
+
+                for (const todo of todos) {
+                    add_todo(todo["todo-content"], todo["todo-finished"])
+                }
+            }
+
+            restore_todos()
         </script>
     </body>
 </html>
